@@ -76,21 +76,21 @@ typedef EmojiViewBuilder = Widget Function(Config config, EmojiViewState state);
 class EmojiPicker extends StatefulWidget {
   /// EmojiPicker for flutter
   EmojiPicker({
-    Key? key,
-    required this.onEmojiSelected,
+    Key key,
+    @required this.onEmojiSelected,
     this.onBackspacePressed,
     this.config = const Config(),
     this.customWidget,
   }) : super(key: key);
 
   /// Custom widget
-  final EmojiViewBuilder? customWidget;
+  final EmojiViewBuilder customWidget;
 
   /// The function called when the emoji is selected
   final OnEmojiSelected onEmojiSelected;
 
   /// The function called when backspace button is pressed
-  final OnBackspacePressed? onBackspacePressed;
+  final OnBackspacePressed onBackspacePressed;
 
   /// Config for customizations
   final Config config;
@@ -112,7 +112,7 @@ class _EmojiPickerState extends State<EmojiPicker> {
     if (!loaded) {
       // Load emojis
       _updateEmojis().then((value) =>
-          WidgetsBinding.instance!.addPostFrameCallback((_) => setState(() {
+          WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {
                 loaded = true;
               })));
 
@@ -132,7 +132,7 @@ class _EmojiPickerState extends State<EmojiPicker> {
     // Build
     return widget.customWidget == null
         ? DefaultEmojiPickerView(widget.config, state)
-        : widget.customWidget!(widget.config, state);
+        : widget.customWidget(widget.config, state);
   }
 
   // Add recent emoji handling to tap listener
@@ -183,8 +183,8 @@ class _EmojiPickerState extends State<EmojiPicker> {
 
   // Get available emoji for given category title
   Future<List<Emoji>> _getAvailableEmojis(Map<String, String> map,
-      {required String title}) async {
-    Map<String, String>? newMap;
+      {@required String title}) async {
+    Map<String, String> newMap;
 
     // Get Emojis cached locally if available
     newMap = await _restoreFilteredEmojis(title);
@@ -199,16 +199,16 @@ class _EmojiPickerState extends State<EmojiPicker> {
     }
 
     // Map to Emoji Object
-    return newMap!.entries
+    return newMap.entries
         .map<Emoji>((entry) => Emoji(entry.key, entry.value))
         .toList();
   }
 
   // Check if emoji is available on current platform
-  Future<Map<String, String>?> _getPlatformAvailableEmoji(
+  Future<Map<String, String>> _getPlatformAvailableEmoji(
       Map<String, String> emoji) async {
     if (Platform.isAndroid) {
-      Map<String, String>? filtered = {};
+      Map<String, String> filtered = {};
       var delimiter = '|';
       try {
         var entries = emoji.values.join(delimiter);
@@ -217,7 +217,7 @@ class _EmojiPickerState extends State<EmojiPicker> {
             {'emojiKeys': keys, 'emojiEntries': entries})) as String;
         var resultKeys = result.split(delimiter);
         for (var i = 0; i < resultKeys.length; i++) {
-          filtered[resultKeys[i]] = emoji[resultKeys[i]]!;
+          filtered[resultKeys[i]] = emoji[resultKeys[i]];
         }
       } on PlatformException catch (_) {
         filtered = null;
@@ -229,7 +229,7 @@ class _EmojiPickerState extends State<EmojiPicker> {
   }
 
   // Restore locally cached emoji
-  Future<Map<String, String>?> _restoreFilteredEmojis(String title) async {
+  Future<Map<String, String>> _restoreFilteredEmojis(String title) async {
     final prefs = await SharedPreferences.getInstance();
     var emojiJson = prefs.getString(title);
     if (emojiJson == null) {

@@ -17,5 +17,5 @@ class EmojiViewState {
   final OnEmojiSelected onEmojiSelected;
 
   /// Callback when pressed on backspace
-  final OnBackspacePressed? onBackspacePressed;
+  final OnBackspacePressed onBackspacePressed;
 }

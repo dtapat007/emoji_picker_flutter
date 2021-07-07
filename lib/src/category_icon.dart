@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class CategoryIcon {
   /// Icon of Category
   const CategoryIcon({
-    required this.icon,
+    @required this.icon,
     this.color = const Color.fromRGBO(211, 211, 211, 1),
     this.selectedColor = const Color.fromRGBO(178, 178, 178, 1),
   });
